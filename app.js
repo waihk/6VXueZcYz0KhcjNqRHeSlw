@@ -37,7 +37,7 @@ init(function(){
 		    
 		    bs_client.put(100, 60, 10, JSON.stringify(job1), function(err, jobid)
 		    {
-		        console.log(new Date(), 'queued a string reverse job in waihk: ', jobid);
+		        console.log(new Date(), jobid);
 		        process.exit();
 		    });
 	    });

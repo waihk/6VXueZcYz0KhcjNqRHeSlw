@@ -10,7 +10,9 @@
 # =============== log ignore
 node_modules
 builtAssets
+mongod
 
+/data/*
 /node_modules/*
 /tmp/*
 /builtAssets/*

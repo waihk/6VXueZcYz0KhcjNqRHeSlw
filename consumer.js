@@ -56,7 +56,7 @@ init(function(){
                                     if(success){
                                         job1.times = job1.times + 1;
                                         job1.retry = 0;
-                                        if(job1.times > 10)
+                                        if(job1.times >= 10)
                                             process.exit();
                                         else
                                             bs_client.put(100, 60, 10, JSON.stringify(job1), function(err, jobid){
@@ -65,7 +65,7 @@ init(function(){
                                             });
                                     }else{
                                         job1.retry = job1.retry + 1;
-                                        if(job1.retry > 3)
+                                        if(job1.retry >= 3)
                                             process.exit();
                                         else
                                             bs_client.put(100, 3, 10, JSON.stringify(job1), function(err, jobid){
@@ -108,7 +108,7 @@ var getRate = function (data, cb){
                             "created_at": (new Date()).getTime(),
                             "rate": obj.amount.toString()
             };
-            mongo_client.collection('aftership').save(save_object, function(e,r){
+            mongo_client.collection('rates').save(save_object, function(e,r){
                 cb(obj.success);
             });
         }else{
