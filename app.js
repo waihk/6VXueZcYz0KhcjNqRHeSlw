@@ -31,10 +31,9 @@ init(function(){
         bs_client.use('waihk', function(err, tname)
 	    {
 		    console.log("using " + tname);
-		    bs_client.list_tube_used(function(err, tubename) {
-		        console.log(tubename);
-		    });
-		    
+		    /*bs_client.list_tube_used(function(err, tube_name) {
+		        console.log(tube_name);
+		    });*/
 		    bs_client.put(100, 60, 10, JSON.stringify(job1), function(err, jobid)
 		    {
 		        console.log(new Date(), jobid);

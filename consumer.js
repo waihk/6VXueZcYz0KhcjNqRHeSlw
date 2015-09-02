@@ -22,8 +22,6 @@ var init = function(cb){
     });
 };
 
-var job1 = {from:"HKD",to:"USD"};
-
 init(function(){
     bs_client
     .on('connect', function()
@@ -31,19 +29,19 @@ init(function(){
         // client can now be used
         bs_client.watch('waihk', function(err, numwatched) {
             console.log('watching waihk:', numwatched)
-            bs_client.list_tubes_watched(function(err, tubelist) {
+            /*bs_client.list_tubes_watched(function(err, tubelist) {
                 console.log(tubelist);
-            });
+            });*/
             var job1 = {};
             var reserve = function() {
                 bs_client.reserve(function(err, jobid, payload) {
                     if(err) console.log('err: ', err);
                     else{
-                        console.log('Time: ', new Date());
-                        console.log('got job: ', jobid);
+                        //console.log('Time: ', new Date());
+                        console.log(new Date(), 'got job: ', jobid);
                         //console.log('got job data: ', Buffer.isBuffer(payload),  payload.length, payload.toString());
                         job1 =  JSON.parse(payload.toString());
-                        console.log('got job data: ',  job1);
+                        console.log('got job data: ',  JSON.stringify(job1));
                         if(!job1.tube_name||job1.tube_name!='waihk')
                             bs_client.release(jobid, null, null, function(err) {
                                 console.log(err);
@@ -56,21 +54,23 @@ init(function(){
                                     if(success){
                                         job1.times = job1.times + 1;
                                         job1.retry = 0;
-                                        if(job1.times >= 10)
-                                            process.exit();
-                                        else
+                                        if(job1.times >= 10){
+                                            //process.exit();
+                                            reserve();
+                                        }else
                                             bs_client.put(100, 60, 10, JSON.stringify(job1), function(err, jobid){
                                                 console.log(new Date(), jobid);
                                                 reserve();
                                             });
                                     }else{
                                         job1.retry = job1.retry + 1;
-                                        if(job1.retry >= 3)
-                                            process.exit();
-                                        else
+                                        if(job1.retry >= 3){
+                                            //process.exit();
+                                            reserve();
+                                        }else
                                             bs_client.put(100, 3, 10, JSON.stringify(job1), function(err, jobid){
-                                                    console.log(new Date(), jobid);
-                                                    reserve();
+                                                console.log(new Date(), jobid);
+                                                reserve();
                                             });
                                     }
                                     
@@ -98,15 +98,17 @@ init(function(){
 
 var getRate = function (data, cb){
     var url = 'https://currency-api.appspot.com/api/'+data.from+'/'+data.to+'.JSON';
-    console.log(url);
+    //console.log(url);
     Request.get(url, function(e,r,body){
         var obj = JSON.parse(body);
-        console.log(obj);
+        console.log(JSON.stringify(obj));
         if(obj.success){
+            var rate = Math.round((parseFloat(obj.rate) + 0.00001) * 100) / 100;
+            //console.log(rate);
             var save_object={"from": data.from,
                             "to": data.to,
                             "created_at": (new Date()).getTime(),
-                            "rate": obj.amount.toString()
+                            "rate": rate.toString()
             };
             mongo_client.collection('rates').save(save_object, function(e,r){
                 cb(obj.success);
@@ -119,10 +121,10 @@ var getRate = function (data, cb){
 
 var getYORate = function (data, cb){
     var url = 'https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20(%22'+data.from+data.to+'%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys';
-    console.log(url);
+    //console.log(url);
     Request.get(url, function(e,r,body){
         var obj = JSON.parse(body);
-        console.log(obj);
+        //console.log(obj);
         cb();
     });
 };
