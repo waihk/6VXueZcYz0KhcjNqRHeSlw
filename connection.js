@@ -1,7 +1,7 @@
 (function () {
     'use strict';
     
-    var MONGO_URL = 'mongodb://127.0.0.1/aftership';
+    var MONGO_URL = 'mongodb://aftership:aftership@ds059672.mongolab.com:59672/testing';
 
     // Declare imports
     var Request = require('request');
