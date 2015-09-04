@@ -1,5 +1,7 @@
 (function () {
     'use strict';
+    
+    var MONGO_URL = 'mongodb://127.0.0.1/aftership';
 
     // Declare imports
     var Request = require('request');
@@ -10,7 +12,7 @@
 
     // Constructor
     function connectionMaganer() {
-        console.log('new connectionMaganer');
+        //console.log('new connectionMaganer');
     }
     
     connectionMaganer.prototype.getBeanstalkClient = function (cb) {
@@ -34,7 +36,7 @@
         if(mongo_client){
             cb(null, mongo_client);
         }else{
-            MongoClient.connect('mongodb://127.0.0.1/aftership', function(err, database) {
+            MongoClient.connect(MONGO_URL, function(err, database) {
 				if(err) {
 					console.log("Error during initial connection pool: " + err);
 				}
